@@ -23,7 +23,7 @@ const Applications = () => {
 
       const token = await getToken()
 
-      const { data } = await api.post(backendUrl + '/api/users/update-resume',
+      const { data } = await api.put(backendUrl + '/api/users/resume',
         formData,
         {headers : { Authorization : `Bearer ${token}`}}
       )

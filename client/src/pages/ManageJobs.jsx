@@ -39,8 +39,8 @@ const ManageJobs = () => {
   // Function to change job visibility
   const changeJobVisibility = async (id)=>{
     try {
-      const { data } = await api.post(backendUrl + '/api/company/change-visibility',
-        { id },
+      const { data } = await api.patch(backendUrl + `/api/company/job-visibility/${id}`,
+        {},
         {headers : { token : companyToken}}
       )
       if(data.success){
@@ -63,6 +63,39 @@ const ManageJobs = () => {
       }
     }
   }
+  
+  // Function to delete a job
+  const deleteJobHandler = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this job? This will also delete all applications.')) {
+      return;
+    }
+    try {
+      const { data } = await api.delete(backendUrl + `/api/company/job/${id}`,
+        {headers : { token : companyToken}}
+      )
+      if(data.success){
+        toast.success(data.message)
+        fetchCompanyJobs()
+      }
+      else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      const status = error.response?.status;
+      if (status === 401) {
+        toast.error('Session expired. Please login again.');
+      } else if (status === 403) {
+        toast.error('Not authorized to delete this job.');
+      } else if (status === 404) {
+        toast.error('Job not found.');
+      } else if (status === 500) {
+        toast.error('Server error. Please try again later.');
+      } else {
+        toast.error(error.message);
+      }
+    }
+  }
+  
   useEffect(()=>{
     if(companyToken){
       fetchCompanyJobs()
@@ -85,6 +118,7 @@ const ManageJobs = () => {
               <th className='py-2 px-4 border-b border-gray-200 text-left max-sm:hidden'>Location</th>
               <th className='py-2 px-4 border-b border-gray-200 text-center'>Applicants</th>
               <th className='py-2 px-4 border-b border-gray-200 text-left'>Visible</th>
+              <th className='py-2 px-4 border-b border-gray-200 text-center'>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -97,6 +131,15 @@ const ManageJobs = () => {
                 <td className='py-2 px-4 border-b border-gray-200 text-center'>{job.applicants}</td>
                 <td className='py-2 px-4 border-b border-gray-200'>
                   <input onChange={()=>changeJobVisibility(job._id)} className='scale-125 ml-4' type="checkbox" checked={job.visible}/>
+                </td>
+                <td className='py-2 px-4 border-b border-gray-200 text-center'>
+                  <button 
+                    onClick={()=>deleteJobHandler(job._id)} 
+                    className='bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition'
+                    title='Delete Job'
+                  >
+                    Delete
+                  </button>
                 </td> 
               </tr>
             ))}
