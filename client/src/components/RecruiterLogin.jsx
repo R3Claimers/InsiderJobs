@@ -58,8 +58,18 @@ const RecruiterLogin = () => {
                 }
             }
         } catch (error) {
-            // if any error accurs
-            toast.error(error.message)
+            const status = error.response?.status;
+            if (status === 401) {
+                toast.error('Invalid email or password.');
+            } else if (status === 409) {
+                toast.error('Company already registered. Please login.');
+            } else if (status === 400) {
+                toast.error('Please fill all required fields.');
+            } else if (status === 500) {
+                toast.error('Server error. Please try again later.');
+            } else {
+                toast.error(error.message);
+            }
         }
 
     }   

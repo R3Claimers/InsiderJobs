@@ -34,7 +34,16 @@ const Applications = () => {
         toast.error(data.message)
       }
     } catch (error) {
-      toast.error(error.message)
+      const status = error.response?.status;
+      if (status === 400) {
+        toast.error('Please select a valid resume file.');
+      } else if (status === 401) {
+        toast.error('Please login to update resume.');
+      } else if (status === 500) {
+        toast.error('Server error. Please try again later.');
+      } else {
+        toast.error(error.message);
+      }
     }
 
     setIsEdit(false)

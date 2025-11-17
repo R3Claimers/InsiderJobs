@@ -19,7 +19,14 @@ const ViewApplications = () => {
         toast.error(data.message)
       }
     } catch (error) {
-      toast.error(error.message)
+      const status = error.response?.status;
+      if (status === 401) {
+        toast.error('Session expired. Please login again.');
+      } else if (status === 500) {
+        toast.error('Server error. Please try again later.');
+      } else {
+        toast.error(error.message);
+      }
     }
   }
   // Function to update job application status
@@ -35,7 +42,16 @@ const ViewApplications = () => {
         toast.error(data.message)
       }
     } catch (error) {
-      toast.error(error.message)
+      const status = error.response?.status;
+      if (status === 401) {
+        toast.error('Session expired. Please login again.');
+      } else if (status === 404) {
+        toast.error('Application not found.');
+      } else if (status === 500) {
+        toast.error('Server error. Please try again later.');
+      } else {
+        toast.error(error.message);
+      }
     }
   }
   useEffect(()=>{
