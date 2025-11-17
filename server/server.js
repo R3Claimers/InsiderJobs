@@ -24,7 +24,7 @@ app.use(express.json())
 app.use(clerkMiddleware())
 
 // Routes
-app.get('/',(req,res)=> res.send("API working"))
+app.get('/',(req,res)=> res.status(200).send("API working"))
 app.post('/webhooks',clerkWebhooks)
 app.use('/api/company',companyRoutes)
 app.use('/api/jobs',jobRoutes)
