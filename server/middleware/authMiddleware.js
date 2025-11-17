@@ -5,7 +5,7 @@ export const protectCompany = async (req,res,next) => {
     const token = req.headers.token
 
     if(!token){
-        return res.json({success : false,message : 'Not authorized , Login again'})
+        return res.status(401).json({success : false,message : 'Not authorized , Login again'})
     }
 
     try{
@@ -15,6 +15,6 @@ export const protectCompany = async (req,res,next) => {
         next()
     }
     catch(error){
-        return res.json({success : false, message : error.message})
+        return res.status(401).json({success : false, message : error.message})
     }
 }

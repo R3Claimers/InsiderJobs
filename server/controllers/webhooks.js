@@ -32,7 +32,7 @@ export const clerkWebhooks = async (req,res) =>{
                 }
 
                 await User.create(userData)
-                res.json({})
+                res.status(200).json({})
                 break;
             }
 
@@ -43,21 +43,22 @@ export const clerkWebhooks = async (req,res) =>{
                     image : data.image_url,
                 }
                 await User.findByIdAndUpdate(data.id,userData)
-                res.json({})
+                res.status(200).json({})
                 break;
             }
 
-            case 'user.deleted' :{
+            case 'user.deleted' : {
                 await User.findByIdAndDelete(data.id)
-                res.json({})
+                res.status(200).json({})
                 break;
             }
 
-            default : break
+            default:
+                break;
         }
     }
     catch(error){
         console.log(error.message);
-        res.json({success:false, message : 'Webhooks Error'})
+        res.status(400).json({success:false, message : 'Webhooks Error'})
     }
 }

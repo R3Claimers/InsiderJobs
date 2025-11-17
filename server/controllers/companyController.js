@@ -11,14 +11,14 @@ export const registerCompany = async (req,res) => {
     const imageFile = req.file
 
     if(!name || !email || !password || !imageFile){
-        return res.json({success : false,message : "Missing Details"})
+        return res.status(400).json({success : false,message : "Missing Details"})
     }
 
     try{
         const companyExists = await Company.findOne({email})
 
         if(companyExists){
-            return res.json({success : false,message: "Company already registered"})
+            return res.status(409).json({success : false,message: "Company already registered"})
         }
 
         const salt = await bcrypt.genSalt(10)
@@ -33,7 +33,7 @@ export const registerCompany = async (req,res) => {
             image : imageUpload.secure_url
         })
 
-        res.json({
+        res.status(201).json({
             success : true,
             company : {
                 _id : company._id,
@@ -47,7 +47,7 @@ export const registerCompany = async (req,res) => {
 
     }
     catch(error){
-        res.json({success : false, message : error.message})
+        res.status(500).json({success : false, message : error.message})
     }
 }
 
@@ -58,10 +58,10 @@ export const loginCompany = async (req,res) => {
     try{
         const company = await Company.findOne({email})
         if(!company){
-            return res.json({success : false , message : "Invalid email"})
+            return res.status(401).json({success : false , message : "Invalid email"})
         }
         if( await bcrypt.compare(password,company.password)){
-            res.json({
+            res.status(200).json({
                 success : true,
                 company : {
                     _id : company._id,
@@ -72,11 +72,11 @@ export const loginCompany = async (req,res) => {
                 token : generateToken(company._id)
             })
         }else{
-            res.json({success : false, message : 'Invalid password'})
+            res.status(401).json({success : false, message : 'Invalid password'})
         }
     }
     catch(error){
-        res.json({success : false , message : error.message})
+        res.status(500).json({success : false , message : error.message})
     }
 }
 
@@ -85,9 +85,9 @@ export const getCompanyData = async (req,res) => {
     
     try {
         const company = req.company
-        res.json({success : true, company})
+        res.status(200).json({success : true, company})
     } catch (error) {
-        res.json({success : false, message : error.message})
+        res.status(500).json({success : false, message : error.message})
     }
 }
 
@@ -111,10 +111,10 @@ export const postJob = async (req,res) => {
         })
 
         await newJob.save()
-        res.json({success : true, newJob})
+        res.status(201).json({success : true, newJob})
     }
     catch(error){
-        res.json({success : false,message : error.message})
+        res.status(500).json({success : false,message : error.message})
     }
 }
 
@@ -129,9 +129,9 @@ export const getCompanyJobApplicants = async (req,res) => {
         .populate('jobId','title location category level salary')
         .exec()
 
-        return res.json({success : true , applications})
+        return res.status(200).json({success : true , applications})
     } catch (error) {
-        res.json({success : false , message : error.message})
+        res.status(500).json({success : false , message : error.message})
     }
 }
 
@@ -146,10 +146,10 @@ export const getCompanyPostedJobs = async (req,res) => {
             const applicants = await JobApplication.find({jobId : job._id})
             return {...job.toObject(), applicants:applicants.length}
         }))
-        res.json({success : true, jobsData})
+        res.status(200).json({success : true, jobsData})
 
     } catch (error) {
-        res.json({success : false , message : error.message})
+        res.status(500).json({success : false , message : error.message})
     }
 }
 
@@ -159,9 +159,9 @@ export const changeJobApplicationStatus = async (req,res) => {
         const { id , status } = req.body
         // Find Job application data and update status
         await JobApplication.findOneAndUpdate({_id : id},{status})
-        res.json({success : true, message : 'status changed'})
+        res.status(200).json({success : true, message : 'status changed'})
     } catch (error) {
-        res.json({success : false , message : error.message})
+        res.status(500).json({success : false , message : error.message})
     }
 }
 
@@ -180,9 +180,9 @@ export const changeVisibility = async (req,res) => {
 
         await job.save()
 
-        res.json({success : true , job})
+        res.status(200).json({success : true , job})
 
     } catch (error) {
-        res.json({success : false, message : error.message})
+        res.status(500).json({success : false, message : error.message})
     }
 }
