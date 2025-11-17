@@ -153,34 +153,74 @@ export const getCompanyPostedJobs = async (req,res) => {
     }
 }
 
-// change job application status
+// change job application status (PATCH method)
 export const changeJobApplicationStatus = async (req,res) => {
     try {
-        const { id , status } = req.body
+        const { id } = req.params
+        const { status } = req.body
+        
+        const application = await JobApplication.findById(id)
+        if (!application) {
+            return res.status(404).json({success : false, message : 'Application not found'})
+        }
+        
         // Find Job application data and update status
         await JobApplication.findOneAndUpdate({_id : id},{status})
-        res.status(200).json({success : true, message : 'status changed'})
+        res.status(200).json({success : true, message : 'Status updated successfully'})
     } catch (error) {
         res.status(500).json({success : false , message : error.message})
     }
 }
 
-// change job visibility
-
+// change job visibility (PATCH method)
 export const changeVisibility = async (req,res) => {
     try {
-        const { id } = req.body
-
+        const { id } = req.params
         const companyId = req.company._id
 
         const job = await Job.findById(id)
-        if(companyId.toString() === job.companyId.toString()){
-            job.visible = !job.visible
+        
+        if (!job) {
+            return res.status(404).json({success : false, message : 'Job not found'})
         }
-
+        
+        if(companyId.toString() !== job.companyId.toString()){
+            return res.status(403).json({success : false, message : 'Not authorized to modify this job'})
+        }
+        
+        job.visible = !job.visible
         await job.save()
 
-        res.status(200).json({success : true , job})
+        res.status(200).json({success : true , message: 'Job visibility updated', job})
+
+    } catch (error) {
+        res.status(500).json({success : false, message : error.message})
+    }
+}
+
+// Delete a job (DELETE method)
+export const deleteJob = async (req,res) => {
+    try {
+        const { id } = req.params
+        const companyId = req.company._id
+
+        const job = await Job.findById(id)
+        
+        if (!job) {
+            return res.status(404).json({success : false, message : 'Job not found'})
+        }
+        
+        if(companyId.toString() !== job.companyId.toString()){
+            return res.status(403).json({success : false, message : 'Not authorized to delete this job'})
+        }
+        
+        // Delete all applications related to this job
+        await JobApplication.deleteMany({jobId: id})
+        
+        // Delete the job
+        await Job.findByIdAndDelete(id)
+
+        res.status(200).json({success : true , message: 'Job deleted successfully'})
 
     } catch (error) {
         res.status(500).json({success : false, message : error.message})

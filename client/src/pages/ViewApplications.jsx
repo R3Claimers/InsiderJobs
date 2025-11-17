@@ -32,8 +32,8 @@ const ViewApplications = () => {
   // Function to update job application status
   const changeJobApplicationStatus = async (id,status) => {
     try {
-      const { data } = await api.post(backendUrl + '/api/company/change-status',
-        {id , status},
+      const { data } = await api.patch(backendUrl + `/api/company/application-status/${id}`,
+        { status },
         {headers : {token : companyToken}}
       )
       if(data.success){

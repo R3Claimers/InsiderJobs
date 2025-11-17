@@ -1,5 +1,5 @@
 import express from 'express'
-import { changeJobApplicationStatus, changeVisibility, getCompanyData, getCompanyJobApplicants, getCompanyPostedJobs, loginCompany, postJob, registerCompany } from '../controllers/companyController.js';
+import { changeJobApplicationStatus, changeVisibility, deleteJob, getCompanyData, getCompanyJobApplicants, getCompanyPostedJobs, loginCompany, postJob, registerCompany } from '../controllers/companyController.js';
 import upload from '../config/multer.js'
 import { protectCompany } from '../middleware/authMiddleware.js';
 const router = express.Router();
@@ -22,10 +22,13 @@ router.get('/applicants',protectCompany,getCompanyJobApplicants)
 // Get company job list
 router.get('/list-jobs',protectCompany,getCompanyPostedJobs)
 
-// change application status
-router.post('/change-status',protectCompany,changeJobApplicationStatus)
+// change application status (PATCH for partial update)
+router.patch('/application-status/:id',protectCompany,changeJobApplicationStatus)
 
-// change application visibility
-router.post('/change-visibility',protectCompany,changeVisibility)
+// change job visibility (PATCH for partial update)
+router.patch('/job-visibility/:id',protectCompany,changeVisibility)
+
+// delete a job (DELETE method)
+router.delete('/job/:id',protectCompany,deleteJob)
 
 export default router

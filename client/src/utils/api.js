@@ -1,15 +1,5 @@
-/**
- * API utility wrapper for Fetch API
- * Provides axios-like interface for making HTTP requests
- */
-
 class ApiClient {
-  /**
-   * Make a GET request
-   * @param {string} url - The endpoint URL
-   * @param {Object} config - Configuration object with headers, etc.
-   * @returns {Promise<Object>} - Returns { data: responseData }
-   */
+ 
   async get(url, config = {}) {
     return this.request(url, {
       method: 'GET',
@@ -17,13 +7,6 @@ class ApiClient {
     });
   }
 
-  /**
-   * Make a POST request
-   * @param {string} url - The endpoint URL
-   * @param {Object|FormData} body - The request body
-   * @param {Object} config - Configuration object with headers, etc.
-   * @returns {Promise<Object>} - Returns { data: responseData }
-   */
   async post(url, body, config = {}) {
     return this.request(url, {
       method: 'POST',
@@ -32,13 +15,6 @@ class ApiClient {
     });
   }
 
-  /**
-   * Make a PUT request
-   * @param {string} url - The endpoint URL
-   * @param {Object|FormData} body - The request body
-   * @param {Object} config - Configuration object with headers, etc.
-   * @returns {Promise<Object>} - Returns { data: responseData }
-   */
   async put(url, body, config = {}) {
     return this.request(url, {
       method: 'PUT',
@@ -47,12 +23,15 @@ class ApiClient {
     });
   }
 
-  /**
-   * Make a DELETE request
-   * @param {string} url - The endpoint URL
-   * @param {Object} config - Configuration object with headers, etc.
-   * @returns {Promise<Object>} - Returns { data: responseData }
-   */
+  
+  async patch(url, body, config = {}) {
+    return this.request(url, {
+      method: 'PATCH',
+      body,
+      ...config,
+    });
+  }
+
   async delete(url, config = {}) {
     return this.request(url, {
       method: 'DELETE',
@@ -60,12 +39,7 @@ class ApiClient {
     });
   }
 
-  /**
-   * Core request method
-   * @param {string} url - The endpoint URL
-   * @param {Object} options - Fetch options
-   * @returns {Promise<Object>} - Returns { data: responseData }
-   */
+
   async request(url, options = {}) {
     const { headers = {}, body, ...rest } = options;
 
