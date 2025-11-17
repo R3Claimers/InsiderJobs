@@ -3,14 +3,14 @@ import {AppContext} from '../context/AppContext'
 import { assets } from '../assets/assets'
 import { toast } from 'react-toastify'
 import Loading from '../components/Loading'
-import axios from 'axios'
+import api from '../utils/api'
 const ViewApplications = () => {
   const { backendUrl , companyToken } = useContext(AppContext)
   const [applicants , setApplicants] = useState(false)
   // Function to fetch company Job Application data
   const fetchCompanyJobApplication = async () =>{
     try {
-      const { data } = await axios.get(backendUrl + '/api/company/applicants',
+      const { data } = await api.get(backendUrl + '/api/company/applicants',
         {headers : {token : companyToken}}
       )
       if(data.success){
@@ -25,7 +25,7 @@ const ViewApplications = () => {
   // Function to update job application status
   const changeJobApplicationStatus = async (id,status) => {
     try {
-      const { data } = await axios.post(backendUrl + '/api/company/change-status',
+      const { data } = await api.post(backendUrl + '/api/company/change-status',
         {id , status},
         {headers : {token : companyToken}}
       )

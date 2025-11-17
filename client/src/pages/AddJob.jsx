@@ -1,7 +1,7 @@
 import React, { useRef,useEffect, useState, useContext } from 'react'
 import {JobLocations,JobCategories, } from '../assets/assets'
 import Quill from 'quill';
-import axios from 'axios';
+import api from '../utils/api';
 import { AppContext } from '../context/AppContext';
 import { toast } from 'react-toastify';
 const AddJob = () => {
@@ -20,7 +20,7 @@ const AddJob = () => {
       
       const description = quillRef.current.root.innerHTML
 
-      const { data } = await axios.post(backendUrl + '/api/company/post-job',
+      const { data } = await api.post(backendUrl + '/api/company/post-job',
         {title,description , location , salary , category, level},
         {headers: {token : companyToken}})
 

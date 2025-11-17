@@ -5,7 +5,7 @@ import { assets } from '../assets/assets'
 import moment from 'moment'
 import { AppContext } from '../context/AppContext'
 import { useAuth, useUser } from '@clerk/clerk-react'
-import axios from 'axios'
+import api from '../utils/api'
 import { toast } from 'react-toastify'
 const Applications = () => {
 
@@ -23,7 +23,7 @@ const Applications = () => {
 
       const token = await getToken()
 
-      const { data } = await axios.post(backendUrl + '/api/users/update-resume',
+      const { data } = await api.post(backendUrl + '/api/users/update-resume',
         formData,
         {headers : { Authorization : `Bearer ${token}`}}
       )
