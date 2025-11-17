@@ -34,7 +34,12 @@ export const AppContextProvider = (props) => {
                 toast.error(data.message)
             }
         } catch (error) {
-            toast.error(error.message)
+            const status = error.response?.status;
+            if (status === 500) {
+                toast.error('Server error. Please try again later.');
+            } else {
+                toast.error(error.message);
+            }
         }
         
     }
@@ -52,7 +57,16 @@ export const AppContextProvider = (props) => {
                 toast.error(data.message)
             }
         } catch (error) {
-            toast.error(error.message)
+            const status = error.response?.status;
+            if (status === 401) {
+                toast.error('Session expired. Please login again.');
+                setCompanyToken(null);
+                localStorage.removeItem('companyToken');
+            } else if (status === 500) {
+                toast.error('Server error. Please try again later.');
+            } else {
+                toast.error(error.message);
+            }
         }
     }
     // Function to fetch user data
@@ -93,7 +107,16 @@ export const AppContextProvider = (props) => {
             }
         }
         catch(error){
-            toast.error(error.message)
+            const status = error.response?.status;
+            if (status === 401) {
+                toast.error('Please login to view applications.');
+            } else if (status === 404) {
+                setUserApplications([]);
+            } else if (status === 500) {
+                toast.error('Server error. Please try again later.');
+            } else {
+                toast.error(error.message);
+            }
         }
     }
     useEffect(()=>{

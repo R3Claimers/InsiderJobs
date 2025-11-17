@@ -34,7 +34,16 @@ const AddJob = () => {
         }
 
     } catch (error) {
-        toast.error(error.message)
+        const status = error.response?.status;
+        if (status === 401) {
+          toast.error('Please login to post a job.');
+        } else if (status === 400) {
+          toast.error('Please fill all required fields.');
+        } else if (status === 500) {
+          toast.error('Server error. Please try again later.');
+        } else {
+          toast.error(error.message);
+        }
     }
 
   }

@@ -34,7 +34,15 @@ const ApplyJob = () => {
         toast.error(data.message)
       }
     } catch (error) {
-      toast.error(error.message)
+      const status = error.response?.status;
+      if (status === 404) {
+        toast.error('Job not found.');
+        navigate('/');
+      } else if (status === 500) {
+        toast.error('Server error. Please try again later.');
+      } else {
+        toast.error(error.message);
+      }
     }
   }
 
@@ -61,7 +69,18 @@ const ApplyJob = () => {
         toast.error(data.message)
       }
     } catch (error) {
-      toast.error(error.message)
+      const status = error.response?.status;
+      if (status === 401) {
+        toast.error('Please login to apply for jobs.');
+      } else if (status === 404) {
+        toast.error('Job not found.');
+      } else if (status === 409) {
+        toast.error('You have already applied for this job.');
+      } else if (status === 500) {
+        toast.error('Server error. Please try again later.');
+      } else {
+        toast.error(error.message);
+      }
     }
   }
 
