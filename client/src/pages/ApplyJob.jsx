@@ -8,7 +8,7 @@ import Footer from '../components/Footer'
 import { assets } from '../assets/assets'
 import kConvert from 'k-convert'
 import moment from 'moment'
-import axios from 'axios'
+import api from '../utils/api'
 import { toast } from 'react-toastify'
 import { useAuth } from '@clerk/clerk-react'
 
@@ -26,7 +26,7 @@ const ApplyJob = () => {
 
   const fetchJob = async ()=>{
     try {
-      const { data } = await axios.get(backendUrl + `/api/jobs/${id}`)
+      const { data } = await api.get(backendUrl + `/api/jobs/${id}`)
 
       if( data.success){
         setJobData(data.job)
@@ -50,7 +50,7 @@ const ApplyJob = () => {
 
       const token = await getToken()
 
-      const { data } = await axios.post(backendUrl + '/api/users/apply',
+      const { data } = await api.post(backendUrl + '/api/users/apply',
         {jobId : JobData._id},
         {headers : { Authorization : `Bearer ${token}`}}
       )

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {assets} from '../assets/assets'
 import { AppContext } from '../context/AppContext';
-import axios from 'axios'
+import api from '../utils/api'
 import { useNavigate} from 'react-router-dom'
 import { toast } from 'react-toastify';
 const RecruiterLogin = () => {
@@ -25,7 +25,7 @@ const RecruiterLogin = () => {
 
         try {
             if(state === "Login"){
-                const { data } = await axios.post(backendUrl + '/api/company/login', { email , password })
+                const { data } = await api.post(backendUrl + '/api/company/login', { email , password })
                 
                 if (data.success){
                     setCompanyData(data.company)
@@ -45,7 +45,7 @@ const RecruiterLogin = () => {
                 formData.append('email',email)
                 formData.append('image',image)
 
-                const { data } = await axios.post(backendUrl + '/api/company/register',formData)
+                const { data } = await api.post(backendUrl + '/api/company/register',formData)
 
                 if(data.success){
                     setCompanyData(data.company)
