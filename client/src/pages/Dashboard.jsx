@@ -8,7 +8,7 @@ const Dashboard = () => {
 
   const navigate = useNavigate()
   
-  const { companyData , setCompanyData , setCompanyToken } = useContext(AppContext)
+  const { companyData , setCompanyData , setCompanyToken , companyToken } = useContext(AppContext)
   
   // Function to logout for company
   const logout = () => {
@@ -61,6 +61,14 @@ const Dashboard = () => {
               <img className='min-w-4' src={assets.person_tick_icon} alt="" />
               <p className='max-sm:hidden'>View Applications</p>
             </NavLink>
+            <a 
+              className='flex items-center p-3 sm:px-6 gap-2 w-full hover:bg-gray-100 cursor-pointer' 
+              href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/admin/report?token=${companyToken}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <p className='max-sm:hidden'>Analytics Report</p>
+            </a>
           </ul>
         </div>
         <div className='flex-1 h-full p-2 sm:p-5 '> 
