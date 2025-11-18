@@ -38,13 +38,13 @@ const JobCard = ({ job }) => {
       <div className="mt-4 flex gap-4 text-sm">
         <button
           onClick={handleApplyClick}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
         >
           Apply now
         </button>
         <button
           onClick={handleApplyClick}
-          className="text-gray-500 border border-gray-500 px-4 py-2 rounded"
+          className="text-gray-500 border border-gray-500 px-4 py-2 rounded cursor-pointer"
         >
           Learn more
         </button>
