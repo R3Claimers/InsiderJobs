@@ -26,6 +26,7 @@ router.get("/ssr/apply-job/:id", async (req, res) => {
       title: job.title,
       job,
       relatedJobs,
+      frontendUrl: process.env.VITE_FRONTEND_URL || "http://localhost:5173",
       backendUrl: process.env.VITE_BACKEND_URL || "http://localhost:5000",
     });
   } catch (error) {

@@ -14,6 +14,7 @@ const LocationAutocomplete = ({
   const [isLoading, setIsLoading] = useState(false);
   const skipNextFetchRef = useRef(false);
   const wrapperRef = useRef(null);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     setQuery(value || "");
@@ -47,9 +48,7 @@ const LocationAutocomplete = ({
       setIsOpen(true);
       try {
         const response = await fetch(
-          `http://localhost:5000/api/users/locations?query=${encodeURIComponent(
-            query
-          )}`
+          `${backendUrl}/api/users/locations?query=${encodeURIComponent(query)}`
         );
         const data = await response.json();
         if (data.success) {

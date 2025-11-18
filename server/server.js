@@ -27,6 +27,15 @@ await connectCloudinary();
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// Add security headers for EJS pages
+app.use((req, res, next) => {
+  if (req.path.startsWith("/ssr/")) {
+    res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  }
+  next();
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(morgan("dev"));

@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %> - InsiderJobs</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title><%= typeof title !== 'undefined' ? title : 'Job' %> - InsiderJobs</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <style>
-        * { font-family: 'Outfit', sans-serif; }
-        html { scroll-behavior: smooth; }
-        ::-webkit-scrollbar { display: none; }
-    </style>
 </head>
-<body>
+<body class="bg-white text-gray-900">
