@@ -26,7 +26,7 @@ router.get("/ssr/apply-job/:id", async (req, res) => {
       title: job.title,
       job,
       relatedJobs,
-      backendUrl: process.env.BACKEND_URL || "http://localhost:5000",
+      backendUrl: process.env.VITE_BACKEND_URL || "http://localhost:5000",
     });
   } catch (error) {
     console.error("Error fetching job details:", error);

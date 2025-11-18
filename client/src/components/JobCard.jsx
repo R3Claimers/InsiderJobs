@@ -6,14 +6,14 @@ import { useUser } from "@clerk/clerk-react";
 const JobCard = ({ job }) => {
   const navigate = useNavigate();
   const { isSignedIn } = useUser();
-
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const handleApplyClick = () => {
     if (isSignedIn) {
       navigate(`/apply-job/${job._id}`);
       scrollTo(0, 0);
     } else {
       // Redirect to SSR page for non-logged-in users
-      window.location.href = `http://localhost:5000/ssr/apply-job/${job._id}`;
+      window.location.href = `${backendUrl}/ssr/apply-job/${job._id}`;
     }
   };
 
