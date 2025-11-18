@@ -1,15 +1,16 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
+import LocationAutocomplete from "./LocationAutocomplete";
 
 const Hero = () => {
   const { setSearchFilter, setIsSearched } = useContext(AppContext);
   const titleRef = useRef(null);
-  const locationRef = useRef(null);
+  const [location, setLocation] = useState("");
   const onSearch = () => {
     setSearchFilter({
       title: titleRef.current.value,
-      location: locationRef.current.value,
+      location: location,
     });
     setIsSearched(true);
   };
@@ -33,15 +34,11 @@ const Hero = () => {
               ref={titleRef}
             />
           </div>
-          <div className="flex items-center">
-            <img className="h-4 sm:h-5" src={assets.location_icon} />
-            <input
-              type="text"
-              placeholder="Location"
-              className="max-sm:text-xs p-2 rounded outline-none w-full"
-              ref={locationRef}
-            />
-          </div>
+          <LocationAutocomplete
+            value={location}
+            onChange={setLocation}
+            placeholder="Location"
+          />
           <button
             onClick={onSearch}
             className="bg-blue-600 px-6 py-2 rounded text-white m-1 cursor-pointer"

@@ -1,94 +1,140 @@
-import React, { useRef,useEffect, useState, useContext } from 'react'
-import {JobLocations,JobCategories, } from '../assets/assets'
-import Quill from 'quill';
-import api from '../utils/api';
-import { AppContext } from '../context/AppContext';
-import { toast } from 'react-toastify';
+import React, { useRef, useEffect, useState, useContext } from "react";
+import { JobLocations, JobCategories } from "../assets/assets";
+import Quill from "quill";
+import api from "../utils/api";
+import { AppContext } from "../context/AppContext";
+import { toast } from "react-toastify";
+import LocationAutocomplete from "../components/LocationAutocomplete";
 const AddJob = () => {
-  const [title,setTitle] = useState('');
-  const [location,setLocation] = useState('Bangalore')
-  const [category ,setCategory] = useState('Programming');
-  const [level, setLevel] = useState('Beginner level');
-  const [salary ,setSalary] = useState(0);
+  const [title, setTitle] = useState("");
+  const [location, setLocation] = useState("");
+  const [category, setCategory] = useState("Programming");
+  const [level, setLevel] = useState("Beginner level");
+  const [salary, setSalary] = useState("");
   const editorRef = useRef(null);
   const quillRef = useRef(null);
 
-  const { backendUrl , companyToken} = useContext(AppContext)
+  const { backendUrl, companyToken } = useContext(AppContext);
   const onSubmitHandler = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      
-      const description = quillRef.current.root.innerHTML
+      const description = quillRef.current.root.innerHTML;
 
-      const { data } = await api.post(backendUrl + '/api/company/post-job',
-        {title,description , location , salary , category, level},
-        {headers: {token : companyToken}})
+      const { data } = await api.post(
+        backendUrl + "/api/company/post-job",
+        { title, description, location, salary, category, level },
+        { headers: { token: companyToken } }
+      );
 
-        if(data.success){
-          toast.success(data.message)
-          setTitle('')
-          setSalary(0)
-          quillRef.current.root.innerHTML = ""
-        }else{
-          toast.error(data.message)
-        }
-
+      if (data.success) {
+        toast.success(data.message || "Job posted successfully", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored",
+        });
+        setTitle("");
+        setLocation("");
+        setCategory("Programming");
+        setLevel("Beginner level");
+        setSalary("");
+        quillRef.current.root.innerHTML = "";
+      } else {
+        toast.error(data.message || "Failed to post job", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored",
+        });
+      }
     } catch (error) {
-        const status = error.response?.status;
-        if (status === 401) {
-          toast.error('Please login to post a job.');
-        } else if (status === 400) {
-          toast.error('Please fill all required fields.');
-        } else if (status === 500) {
-          toast.error('Server error. Please try again later.');
-        } else {
-          toast.error(error.message);
-        }
+      const status = error.response?.status;
+      if (status === 401) {
+        toast.error("Please login to post a job.", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored",
+        });
+      } else if (status === 400) {
+        toast.error("Please fill all required fields.", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored",
+        });
+      } else if (status === 500) {
+        toast.error("Server error. Please try again later.", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored",
+        });
+      } else {
+        toast.error(error.message, {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored",
+        });
+      }
     }
-
-  }
-  useEffect(()=>{
+  };
+  useEffect(() => {
     //  initiate quill only once
-    if(!quillRef.current && editorRef.current){
-      quillRef.current = new Quill(editorRef.current,{
-        theme:'snow'
-      })
+    if (!quillRef.current && editorRef.current) {
+      quillRef.current = new Quill(editorRef.current, {
+        theme: "snow",
+      });
     }
-  },[quillRef,editorRef])
+  }, [quillRef, editorRef]);
 
   return (
-    <form onSubmit={onSubmitHandler} className='container p-4 flex flex-col w-full items-start gap-3'>
-      
-      <div className='w-full'>
-        <p className='mb-2'>Job Title</p>
-        <input onChange={e => setTitle(e.target.value)} type="text" placeholder='Type here' value={title}  required className='w-fulll max-w-lg px-3 py-2 border-2 border-gray-300 rounded'/>
+    <form
+      onSubmit={onSubmitHandler}
+      className="container p-4 flex flex-col w-full items-start gap-3"
+    >
+      <div className="w-full">
+        <p className="mb-2">Job Title</p>
+        <input
+          onChange={(e) => setTitle(e.target.value)}
+          type="text"
+          placeholder="Type here"
+          value={title}
+          required
+          className="w-fulll max-w-lg px-3 py-2 border-2 border-gray-300 rounded"
+        />
       </div>
-      <div className='w-full max-w-lg'>
-        <p className='my-2'>Job Description</p>
-        <div ref={editorRef}>
-
-        </div>
+      <div className="w-full max-w-lg">
+        <p className="my-2">Job Description</p>
+        <div ref={editorRef}></div>
       </div>
-      <div className='flex flex-col sm:flex-row gap-2 w-full sm:gap-8'>
-        <div className=''>
-          <p className='mb-2'>Job Category</p>
-          <select className='w-full px-3 py-2 border-2 border-gray-300 rounded' onChange={e => setCategory(e.target.value)}>
-            {JobCategories.map((category,index)=>(
-              <option key={index} value={category}>{category}</option>
+      <div className="flex flex-col sm:flex-row gap-2 w-full sm:gap-8">
+        <div className="">
+          <p className="mb-2">Job Category</p>
+          <select
+            className="w-full px-3 py-2 border-2 border-gray-300 rounded"
+            onChange={(e) => setCategory(e.target.value)}
+            value={category}
+          >
+            {JobCategories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
             ))}
           </select>
         </div>
         <div>
-          <p className='mb-2'>Job Location</p>
-          <select className='w-full px-3 py-2 border-2 border-gray-300 rounded' onChange={e => setLocation(e.target.value)}>
-            {JobLocations.map((location,index)=>(
-              <option key={index} value={location}>{location}</option>
-            ))}
-          </select>
+          <p className="mb-2">Job Location</p>
+          <LocationAutocomplete
+            value={location}
+            onChange={setLocation}
+            placeholder="Enter job location"
+            className="w-full border-2 border-gray-300 rounded px-3 py-2"
+            inputClassName="px-2 py-0"
+          />
         </div>
         <div>
-          <p className='mb-2'>Job Level</p>
-          <select className='w-full px-3 py-2 border-2 border-gray-300 rounded' onChange={e => setLevel(e.target.value)}>
+          <p className="mb-2">Job Level</p>
+          <select
+            className="w-full px-3 py-2 border-2 border-gray-300 rounded"
+            onChange={(e) => setLevel(e.target.value)}
+            value={level}
+          >
             <option value="Beginner level">Beginner level</option>
             <option value="Intermediate level">Intermediate level</option>
             <option value="Senior level">Senior level</option>
@@ -96,12 +142,21 @@ const AddJob = () => {
         </div>
       </div>
       <div>
-        <p className='mb-2'>Job Salary</p>
-        <input min={0} className='w-full px-3 py-2 border-2 border-gray-300 rounded' onChange={e => setSalary(e.target.value)} type="Number" placeholder='25000' />
+        <p className="mb-2">Job Salary</p>
+        <input
+          min={0}
+          className="w-full px-3 py-2 border-2 border-gray-300 rounded"
+          onChange={(e) => setSalary(e.target.value)}
+          type="Number"
+          placeholder="25000"
+          value={salary}
+        />
       </div>
-      <button className='w-28 py-3 mt-4 bg-black text-white rounded'>ADD</button>
+      <button className="w-28 py-3 mt-4 bg-black text-white rounded cursor-pointer">
+        ADD
+      </button>
     </form>
-  )
-}
+  );
+};
 
-export default AddJob
+export default AddJob;
