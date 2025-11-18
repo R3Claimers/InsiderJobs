@@ -10,6 +10,7 @@ InsiderJobs is a full‑stack job portal where candidates can search and apply f
 ## Features
 
 **For candidates**
+
 - Sign in using Clerk authentication.
 - Browse all available jobs.
 - Filter jobs by **location** and **job role**.
@@ -19,6 +20,7 @@ InsiderJobs is a full‑stack job portal where candidates can search and apply f
 - View list and status of their job applications.
 
 **For companies**
+
 - Register and log in as a company.
 - Manage company profile (including logo-image upload).
 - Post new job openings.
@@ -33,10 +35,10 @@ InsiderJobs is a full‑stack job portal where candidates can search and apply f
 ## Tech Stack
 
 - **Frontend**: React, Vite, React Router, Tailwind CSS, React Toastify, Quill
-- **Backend**: Node.js, Express, MongoDB (Mongoose)
+- **Backend**: Node.js, Express, MongoDB (Mongoose), EJS (for server-side views), express.static()
 - **Auth**: Clerk
 - **Storage / Media**: Cloudinary for images, cloud storage for uploaded resumes
-- **Other**: Multer, pdf-parse, JWT, Bcrypt, Sentry, Morgan, CORS
+- **Other**: Multer, pdf-parse, JWT, Bcrypt, Sentry, Morgan, CORS, GeoNames API
 
 ---
 
@@ -92,8 +94,8 @@ InsiderJobs/
     │   ├── companyRoutes.js
     │   ├── jobRoutes.js
     │   └── userRoutes.js
-    ├── public/
-    │   └── uploads/
+    ├── public/              # Serves static files via express.static()
+    ├── views/               # EJS templates for server-rendered pages
     └── server.js
 ```
 
@@ -205,82 +207,94 @@ All protected company routes use `protectCompany` middleware, which expects a va
 
 ### Company Routes (`/api/company`)
 
-- `POST /register`  
-  - Description: Register a new company account with optional logo/image upload.  
-  - Auth: Public.  
+- `POST /register`
+
+  - Description: Register a new company account with optional logo/image upload.
+  - Auth: Public.
   - Body (multipart/form-data):
     - `name`, `email`, `password`, other profile fields.
     - `image` (file, company logo) – handled by Multer.
 
-- `POST /login`  
-  - Description: Log in a company and return auth token / session data.  
-  - Auth: Public.  
+- `POST /login`
+
+  - Description: Log in a company and return auth token / session data.
+  - Auth: Public.
   - Body (JSON): `email`, `password`.
 
-- `GET /company`  
-  - Description: Get authenticated company profile data.  
+- `GET /company`
+
+  - Description: Get authenticated company profile data.
   - Auth: Protected (`protectCompany`).
 
-- `POST /post-job`  
-  - Description: Create a new job posting.  
-  - Auth: Protected.  
+- `POST /post-job`
+
+  - Description: Create a new job posting.
+  - Auth: Protected.
   - Body (JSON): fields like `title`, `description`, `location`, `type`, `salary`, etc.
 
-- `GET /applicants`  
-  - Description: Get applicants for the company's jobs, including resume links and application status.  
+- `GET /applicants`
+
+  - Description: Get applicants for the company's jobs, including resume links and application status.
   - Auth: Protected.
 
-- `GET /list-jobs`  
-  - Description: Get list of jobs posted by the authenticated company.  
+- `GET /list-jobs`
+
+  - Description: Get list of jobs posted by the authenticated company.
   - Auth: Protected.
 
-- `PATCH /application-status/:id`  
-  - Description: Change status of a job application (e.g., `pending`, `accepted`, `rejected`).  
-  - Auth: Protected.  
-  - Params: `id` = application ID.  
+- `PATCH /application-status/:id`
+
+  - Description: Change status of a job application (e.g., `pending`, `accepted`, `rejected`).
+  - Auth: Protected.
+  - Params: `id` = application ID.
   - Body (JSON): `{ status: "accepted" | "rejected" | "pending" }`.
 
-- `PATCH /job-visibility/:id`  
-  - Description: Toggle visibility of a job (show/hide from candidates).  
-  - Auth: Protected.  
-  - Params: `id` = job ID.  
+- `PATCH /job-visibility/:id`
+
+  - Description: Toggle visibility of a job (show/hide from candidates).
+  - Auth: Protected.
+  - Params: `id` = job ID.
   - Body (JSON): `{ isVisible: boolean }`.
 
-- `DELETE /job/:id`  
-  - Description: Delete a job posting created by the authenticated company.  
-  - Auth: Protected.  
+- `DELETE /job/:id`
+  - Description: Delete a job posting created by the authenticated company.
+  - Auth: Protected.
   - Params: `id` = job ID.
 
 ### Job Routes (`/api/jobs`)
 
-- `GET /`  
-  - Description: Get list of jobs with optional filtering (e.g., by role / location).  
-  - Auth: Public (used by candidates).  
+- `GET /`
+
+  - Description: Get list of jobs with optional filtering (e.g., by role / location).
+  - Auth: Public (used by candidates).
   - Query params (examples):
     - `location` – filter by location.
     - `role` – filter by job role.
 
-- `GET /:id`  
-  - Description: Get details of a single job by its ID.  
+- `GET /:id`
+  - Description: Get details of a single job by its ID.
   - Auth: Public.
 
 ### User Routes (`/api/users`)
 
-- `GET /user`  
-  - Description: Get profile data of the logged‑in user (candidate).  
+- `GET /user`
+
+  - Description: Get profile data of the logged‑in user (candidate).
   - Auth: Typically requires a valid Clerk session (handled by `clerkMiddleware`).
 
-- `POST /apply`  
-  - Description: Apply to a job as the current user.  
+- `POST /apply`
+
+  - Description: Apply to a job as the current user.
   - Body (JSON): contains job ID and possibly additional fields (cover letter, expected salary, etc.).
 
-- `GET /applications`  
-  - Description: Get list of jobs the user has applied to, including status.  
+- `GET /applications`
+
+  - Description: Get list of jobs the user has applied to, including status.
   - Auth: User must be logged in.
 
-- `PUT /resume`  
-  - Description: Upload or update the user resume.  
-  - Auth: User must be logged in.  
+- `PUT /resume`
+  - Description: Upload or update the user resume.
+  - Auth: User must be logged in.
   - Body (multipart/form-data): `resume` (PDF file) – handled by Multer.
 
 ---
@@ -288,6 +302,7 @@ All protected company routes use `protectCompany` middleware, which expects a va
 ## High‑Level User Flows
 
 **Candidate flow**
+
 1. Sign in with Clerk on the client.
 2. Browse jobs from `/api/jobs` with optional filters.
 3. Upload resume via `PUT /api/users/resume`.
@@ -295,6 +310,7 @@ All protected company routes use `protectCompany` middleware, which expects a va
 5. Track application status via `GET /api/users/applications`.
 
 **Company flow**
+
 1. Register/Llogin via `/api/company/register` and `/api/company/login`.
 2. View company data via `GET /api/company/company`.
 3. Post jobs with `POST /api/company/post-job`.
