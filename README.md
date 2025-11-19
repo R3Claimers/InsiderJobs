@@ -3,7 +3,7 @@
 InsiderJobs is a full‑stack job portal where candidates can search and apply for jobs and companies can manage job openings and applications.
 
 - GitHub: https://github.com/R3Claimers/InsiderJobs
-- Live Client: https://insiderjobs-r3claimers.vercel.app/
+- Live Client: https://insiderjobs-r3.vercel.app/
 
 ---
 
