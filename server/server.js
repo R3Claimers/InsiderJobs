@@ -1,7 +1,6 @@
 import './config/instrument.js'
 import express from 'express'
 import cors from 'cors'
-import morgan from 'morgan'
 import 'dotenv/config'
 import connectDB from './config/db.js'
 import * as Sentry from '@sentry/node';
@@ -32,7 +31,6 @@ await connectDB()
 await connectCloudinary()
 
 //Middlewares
-app.use(morgan("dev")); 
 app.use(cors())
 app.use(express.json())
 app.use(clerkMiddleware())
